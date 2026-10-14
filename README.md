@@ -22,6 +22,21 @@ pip install onnxruntime-gpu
 
 ---
 
+## Dataset
+
+Download the **Forvia test dataset** from the following SharePoint folder:
+
+[Forvia Test Dataset](https://faurecia.sharepoint.com/:f:/r/sites/IRYS-Research-Projects-OutOfPosition/Shared%20Documents/Probayes_OoP/forvia4testset?d=w3f309a9bd85d4737a8d3f4a1b5a1c550&csf=1&web=1&e=0fkt19)
+
+Extract/copy the `forvia4testset` folder into:
+
+```text
+data/
+└── forvia4testset/
+```
+
+The folder must contain the `.mp4` videos and their associated tracking `.csv` files.
+
 ## Run Inference
 
 From the project root directory:
