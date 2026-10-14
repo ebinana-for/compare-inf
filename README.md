@@ -33,7 +33,7 @@ python3 src/inference_python/py_inference_v2_same_result_C_kpi_golden_ref_multip
     --with_tatoo_keypoints False \
     --output_dir ./output/forvia4test2/golden_ref_kpi/onnx \
     --config_path ./src/config/eval_onnx_july_4_forvia_sequences.yaml \
-    --gt_csv_dir ./output/inference/forvia4test2
+    --gt_csv_dir ./gt
 ```
 
 ### Inputs
