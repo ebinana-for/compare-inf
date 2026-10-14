@@ -11,10 +11,11 @@ Modifié pour supporter :
 """
 
 # This model is working with both fp32 and int8 , it can give you really close results to 
-# the C++ output but some really similar that are not exactly the same too 
+ 
 
 import os
 import sys
+import logging
 import glob
 import cv2
 import torch
@@ -24,15 +25,15 @@ from tqdm import tqdm
 from fire import Fire
 from sklearn.metrics import precision_score, recall_score, f1_score, confusion_matrix
 
-# Remonte à la racine source_code puis redescend dans training pour trouver 'src'
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../training')))
-from src.utils.config import get_config
-from src.posture.train_posture import load_model
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-# Pour tous mes codes, j'utilise des environnements Conda.
-# Never remove my personal comments from the code.
+from model.mobilenetv2 import MobileNetV2Posture
+from utils.config import get_config
 
-# Ordre canonique des classes, réutilisé pour l'export prédictions ET les KPI.
+logger = logging.getLogger(__name__)
+
+
+
 CPP_CLASS_ORDER = [
     "closetoairbag",
     "legsondashboard",
@@ -44,6 +45,53 @@ CPP_CLASS_ORDER = [
     "pelvisdrift",
 ]
 
+def load_model(config):
+    """
+    Load the posture classification model based on the configuration.
+    Args:
+        config (Config): Configuration object containing model parameters.
+    Returns:
+        model (torch.nn.Module): The loaded posture classification model.
+    """
+    head_param = []
+    for key, val in config.model.heads_params.items():
+        head = val.copy()
+        head["name"] = key
+        head_param.append(head)
+
+    if config.model.name == "mobilenet_v2":
+        assert (
+            len(head_param) == 1
+        ), "You defined {} heads, but {} cannot handle more than 1.".format(
+            len(head_param), config.model.name
+        )
+        model = MobileNetV2Posture(
+            head_param,
+            in_chans=config.model.input_channels,
+            width_mult=config.model.width_multiplier,
+        )
+    else:
+        logger.error(f"Unknown model {config.model.name}")
+        raise NotImplementedError(f"Model {config.model.name} is not supported.")   
+
+    
+
+    if "checkpoint" in config.model and config.model.checkpoint is not None:
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        logger.info(f"Loading models weight from the checkpoint : {config.model.checkpoint}")
+        
+        checkpoint_data = torch.load(config.model.checkpoint, map_location=device)
+        
+        # Gestion si c'est un dico complet ou juste les poids
+        if isinstance(checkpoint_data, dict) and "model_state_dict" in checkpoint_data:
+            state_dict = checkpoint_data["model_state_dict"]
+        else:
+            state_dict = checkpoint_data
+
+        clean_state_dict = {k.replace('module.', ''): v for k, v in state_dict.items()}
+        model.load_state_dict(clean_state_dict)
+
+    return model
 
 def _compute_kpi_for_dataframe(df_merged, sequence_name, threshold, cpp_class_order):
     """Fonction utilitaire pour calculer les KPIs sur un DataFrame mergé"""
@@ -419,4 +467,4 @@ def main(model_path, videos_dir, with_tatoo_keypoints, output_dir=None, config_p
 
 
 if __name__ == "__main__":
-    Fire(main)
+    Fire(main) 
