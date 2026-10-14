@@ -62,3 +62,31 @@ python3 src/inference_python/py_inference_v2_same_result_C_kpi_golden_ref_multip
 
 - Per-video prediction CSV files
 - `KPI_summary_videos.csv` containing Precision, Recall, F1-Score, TP, TN, FP, and FN metrics
+
+---
+
+## Compare Python vs C++ Results
+
+Generate the final comparison report between:
+
+- Ground Truth
+- Python inference output
+- C++ inference output
+
+```bash
+python3 src/kpi_comparison/comparison_3_inference_table_output_multiple_video_frame_align.py \
+    --eval_csv_dir ./gt \
+    --py_inf_csv_dir ./output/forvia4test2/golden_ref_kpi/onnx \
+    --c_inf_csv_dir ./output/inference/forvia4test/ \
+    --output_csv ./output/comparison_3_inference_multiple_vid_frame_align2.csv
+```
+
+### Output
+
+The script generates:
+
+```text
+./output/comparison_3_inference_multiple_vid_frame_align2.csv
+```
+
+This file contains the final frame-aligned comparison between the Ground Truth, Python inference results, and C++ inference results, along with the associated KPI metrics.
