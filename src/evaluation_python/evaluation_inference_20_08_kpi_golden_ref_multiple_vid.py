@@ -10,7 +10,6 @@ Exporte 1 CSV par vidéo pour les prédictions, et 1 CSV récapitulatif pour les
 import os
 import sys
 
-# sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../training')))
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from tqdm import tqdm
