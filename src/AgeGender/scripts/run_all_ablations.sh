@@ -16,12 +16,12 @@ BASE_OUTPUT_DIR="tmp/mnt/data/pbys/training/saved_evals/AgeGender/private/ablati
 
 # Les combinaisons de l'étude d'ablation finale
 declare -a tests=(
-    "r_channel bbox forced rolling"
-    "grayscale bbox forced rolling"
-    "r_channel keypoints forced rolling"
-    "grayscale keypoints forced rolling"      
-    "grayscale keypoints letterbox rolling"         
-    "grayscale keypoints letterbox cumulative"  
+    "r_channel bbox forced rolling"                             #eval clone 
+#    "grayscale bbox forced rolling"
+#    "r_channel keypoints forced rolling"
+#    "grayscale keypoints forced rolling"      
+#    "grayscale keypoints letterbox rolling"         
+    "grayscale keypoints letterbox cumulative"                  #c++ clone
 )
 
 echo "=========================================================="
